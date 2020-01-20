@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const app = express();
 const uuidv1 = require('uuid/v1');
+const expressValidator = require('express-validator');
 
 const AuthRoute = require('./routes/auth');
 
@@ -14,6 +15,7 @@ require('dotenv').config();
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(expressValidator());
 
 
 //api routes

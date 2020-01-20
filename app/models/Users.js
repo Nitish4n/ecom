@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const uuidv1 = require('uuid/v1');
 
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
@@ -38,11 +38,10 @@ const UserSchema = new mongoose.Schema(
 );
 
 // virtual field
-UserSchema
+userSchema
     .virtual('password')
     .set(function(password) {
         this._password = password;
-        console.log('Lcal PD: '+this._password)
         this.salt = uuidv1();
         this.hashed_password = this.encryptPassword(password);
     })
@@ -50,9 +49,10 @@ UserSchema
         return this._password;
     });
 
-UserSchema.methods = {
-    authenticate: function(plainText) {
-        return this.encryptPassword(plainText) === this.hashed_password;
+userSchema.methods = {
+
+    authenticate : function(plainText){
+        return this.encryptPassword(plainText) === this.hashed_password
     },
 
     encryptPassword: function(password) {
@@ -68,4 +68,4 @@ UserSchema.methods = {
     }
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);
