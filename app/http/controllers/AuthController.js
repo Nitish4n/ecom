@@ -1,5 +1,6 @@
 const User = require('../../models/Users');
 const { errorHandler } = require('../../helpers/dbErrorHandler');
+require('dotenv').config();
 const jwt = require('jsonwebtoken'); // to generate signed in token
 const expressJwt = require('express-jwt'); //to check authenticated user token
 
@@ -56,3 +57,9 @@ exports.Logout = (req, res) => {
     res.clearCookie('t')
     res.json({message: 'User Successfully Logged Out'});
 }
+
+
+exports.requireSignIn = expressJwt({
+    secret : process.env.JWTSecret,
+    userProperty: "auth"
+});
