@@ -1,9 +1,27 @@
-const User = require('../../../models/Users');
+const User = require('../../models/Users');
+const { errorHandler } = require('../../helpers/dbErrorHandler');
 const jwt = require('jsonwebtoken'); // to generate signed in token
 const expressJwt = require('express-jwt'); //to check authenticated user token
 
+exports.Register = (req, res) => {
+    console.log(req.body)
+    const user = new User(req.body);
+    user.save((err, user) => {
+        if(err){
+            return res.status(400).json(
+                errorHandler(err)
+            )
+        }
 
-const Login = (req, res) => {
+        user.salt = undefined
+        user.hashed_password = undefined
+
+        res.json({user})
+    })
+}
+
+
+exports.Login = (req, res) => {
     const { email , password } = req.body;
     User.findOne({email}, (err, user) => {
         if(err || !user){
@@ -19,7 +37,7 @@ const Login = (req, res) => {
             return res.status(401).json({
                 error: "Email and Password not matched"
             });
-        }
+        } 
 
         //generate token
         const token = jwt.sign({_id: user._id}, process.env.JWTSecret)
@@ -33,4 +51,8 @@ const Login = (req, res) => {
     })
 }
 
-module.exports = Login;
+
+exports.Logout = (req, res) => {
+    res.clearCookie('t')
+    res.json({message: 'User Successfully Logged Out'});
+}
