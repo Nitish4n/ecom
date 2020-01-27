@@ -8,6 +8,7 @@ const uuidv1 = require('uuid/v1');
 const expressValidator = require('express-validator');
 
 const AuthRoute = require('./routes/auth');
+const UserRoute = require('./routes/user');
 
 require('dotenv').config();
 
@@ -20,6 +21,7 @@ app.use(expressValidator());
 
 //api routes
 app.use('/api/auth', AuthRoute);
+app.use('/api/user', UserRoute);
 
 //routes
 app.get('/', (req, res) => {
