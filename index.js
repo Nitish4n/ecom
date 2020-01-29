@@ -11,6 +11,9 @@ const AuthRoute = require('./routes/auth');
 const UserRoute = require('./routes/user');
 
 require('dotenv').config();
+const cors = require('cors')
+
+app.use(cors())
 
 //middleware
 app.use(morgan('dev'));
