@@ -4,22 +4,47 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken'); // to generate signed in token
 const expressJwt = require('express-jwt'); //to check authenticated user token
 
+// exports.Register = (req, res) => {
+//     console.log(req.body)
+//     const user = new User(req.body);
+//     user.save((err, user) => {
+//         if(err){
+//             return res.status(400).json(
+//                 errorHandler(err)
+//             )
+//         }
+
+//         user.salt = undefined
+//         user.hashed_password = undefined
+
+//         res.json({user})
+//     })
+// }
+
 exports.Register = (req, res) => {
-    console.log(req.body)
-    const user = new User(req.body);
-    user.save((err, user) => {
-        if(err){
-            return res.status(400).json(
-                errorHandler(err)
-            )
+    // console.log(req.body);
+    User.findOne({ email: req.body.email }).exec((err, user) => {
+        if (user) {
+            return res.status(400).json({
+                error: 'Email is taken'
+            });
         }
-
-        user.salt = undefined
-        user.hashed_password = undefined
-
-        res.json({user})
-    })
-}
+ 
+        const { name, email, password } = req.body;
+        let newUser = new User({ name, email, password});
+        
+        newUser.save((err, success) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                });
+            }
+            res.json({
+                message: 'Signup success! Please signin.'
+            });
+        });
+    });
+};
 
 
 exports.Login = (req, res) => {

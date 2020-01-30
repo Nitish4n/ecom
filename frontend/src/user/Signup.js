@@ -17,42 +17,61 @@ const Signup = () => {
         setValues({...values, error:false , [name] : event.target.value})
     }
 
-    const {name , email, password} = values;
+    const {name , email, password, error, success} = values;
 
     const buttonSubmitHandler = (e) => {
         e.preventDefault();
-        signUp({name, email, password});
+        signupApi({ name, email, password }).then(data => {console.log(data)})
+        
+        
     }
 
-    const signUp = (user) => {
+    const signupApi = (user) => {
         // console.log(name+" "+email+" "+password)
-        fetch(`${API}/auth/signup`, {
+         fetch(`${API}/auth/signup`, {
             method:"POST",
             headers: {
                 Accept: 'application/json',
-                'content-type': 'application/json'
+                'Content-Type': 'application/json'
             },
             body : JSON.stringify(user)
         })
-        .then(response => response.json())
+        .then(response => ( response.json()
+        ))
         .catch(err => {
+            console.log('No')
             console.log(err)
         })
     }
 
+    const showError = () => (
+        <div className="alert alert-danger" style={{display: error ? '' : 'none'}}>
+            {error}
+        </div>
+    )
+
+
+    const showSuccess = () => (
+        <div className="alert alert-info" style={{display: success ? '' : 'none'}}>
+            New Account is Created. Please Login
+        </div>
+    )
+
     const signUpForm = () => (
         <div className="col-md-6 col-md-offset-3">
+            {showError()}
+            {showSuccess()}
             <form>
                 <div className="form-group">
-                    <label for="exampleInputEmail1">Name</label>
+                    <label>Name</label>
                     <input type="text" className="form-control" onChange={handleChange('name')}  placeholder="Enter Name" />
                 </div>
                 <div className="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
+                    <label>Email address</label>
                     <input type="email" className="form-control"  onChange={handleChange('email')} placeholder="Enter email" />
                 </div>
                 <div className="form-group">
-                    <label for="exampleInputPassword1">Password</label>
+                    <label>Password</label>
                     <input type="password" className="form-control" onChange={handleChange('password')}  placeholder="Password" />
                 </div>
                 <button type="submit" onClick={buttonSubmitHandler} className="btn btn-primary">Submit</button>
