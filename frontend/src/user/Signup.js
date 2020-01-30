@@ -65,7 +65,6 @@ const Signup = () => {
         <div>
             <Layout title="Sign Up" description="Please Sign up For Profile Access" >
                 {signUpForm()}
-                {JSON.stringify(values)}
             </Layout>
         </div>
     )

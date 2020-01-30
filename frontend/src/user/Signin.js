@@ -1,26 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../core/Layout';
+import { API } from '../config';
 
 const Signin = () => {
 
+    const [values, newValues] = useState({
+        email: '',
+        password: '',
+        error : '',
+        success: false,
+    })
+
+    const inputChange = name => event => {
+        // console.log(event.target.value)
+        newValues({...values, error:false, [name]:event.target.value})
+    }
+    const {email, password, error, success } = values;
+
+
+    const SignInSubmit = (e) => {
+        e.preventDefault();
+        signInAPI({email, password})
+    }
+
+    const signInAPI = (user) => {
+        console.log(user);
+        fetch(`${API}/auth/signin`, {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(user)
+        })
+        .then(response => response.json())
+        .catch(err => console.log(err))
+    }
 
     const signInForm = () => (
         <div className="col-md-6 col-md-offset-3">
             <form>
                 <div className="form-group">
-                    <label for="exampleInputEmail1">Email address</label>
-                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" />
-                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                    <label >Email address</label>
+                    <input type="email" className="form-control" onChange={inputChange('email')} placeholder="Enter email" />
                 </div>
                 <div className="form-group">
-                    <label for="exampleInputPassword1">Password</label>
-                    <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" />
+                    <label >Password</label>
+                    <input type="password" className="form-control" onChange={inputChange('password')} placeholder="Password" />
                 </div>
-                <div className="form-check">
-                    <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                    <label className="form-check-label" for="exampleCheck1">Check me out</label>
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
+                <button type="submit" onClick={SignInSubmit} className="btn btn-primary">Submit</button>
             </form>
         </div>
     )
@@ -28,6 +56,7 @@ const Signin = () => {
         <div>
             <Layout title="Sign In" description="Please Sign in For Profile Access" >
                 {signInForm()}
+                {JSON.stringify(values)}
             </Layout>
         </div>
     )

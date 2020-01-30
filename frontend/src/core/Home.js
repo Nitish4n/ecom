@@ -5,7 +5,7 @@ const Home = () => {
     return (
         <div>
             <Layout title="Ecommerce" description="Ecommerce App Home Page" >
-                {API}
+                ...
             </Layout>
         </div>
     )
