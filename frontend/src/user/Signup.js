@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Layout from '../core/Layout';
 import { API } from '../config';
-
+import { Link } from 'react-router-dom';
+import { signupApi } from '../auth'
 const Signup = () => {
 
     const [values, setValues] = useState({
@@ -14,6 +15,7 @@ const Signup = () => {
 
 
     const handleChange = name => event => {
+        
         setValues({...values, error:false , [name] : event.target.value})
     }
 
@@ -21,28 +23,28 @@ const Signup = () => {
 
     const buttonSubmitHandler = (e) => {
         e.preventDefault();
-        signupApi({ name, email, password }).then(data => {console.log(data)})
+        signupApi({ name, email, password })
+        .then(data => {
+            if(data.error){
+                setValues({
+                    ...values, error: data.error, success:false
+                })
+            }else{
+                setValues({
+                    ...values, 
+                    name:'',
+                    email:'',
+                    password:'',
+                    error: '', 
+                    success:true
+                })
+            }
+        })
         
         
     }
 
-    const signupApi = (user) => {
-        // console.log(name+" "+email+" "+password)
-         fetch(`${API}/auth/signup`, {
-            method:"POST",
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body : JSON.stringify(user)
-        })
-        .then(response => ( response.json()
-        ))
-        .catch(err => {
-            console.log('No')
-            console.log(err)
-        })
-    }
+    
 
     const showError = () => (
         <div className="alert alert-danger" style={{display: error ? '' : 'none'}}>
@@ -53,7 +55,7 @@ const Signup = () => {
 
     const showSuccess = () => (
         <div className="alert alert-info" style={{display: success ? '' : 'none'}}>
-            New Account is Created. Please Login
+            New Account is Created. Please <Link to="/signin">Sign In</Link>
         </div>
     )
 
