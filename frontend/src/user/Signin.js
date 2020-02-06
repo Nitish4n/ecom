@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
 import {Redirect} from 'react-router-dom';
 import Layout from '../core/Layout';
-import { signInAPI , authenticate} from '../auth'
-const Signin = () => {
+import { signInAPI , authenticate, isAuthenticated} from '../auth'
 
+import { connect } from 'react-redux'
+
+const Signin = (props) => {
+    console.log(props)
     const [values, newValues] = useState({
-        email: 'nitish4n1@gmail.com',
+        email: props.email,
         password: '123456',
         error : '',
         loading: false,
         success: false,
         redirectToReferrer: false
     })
+
+    const {user} = isAuthenticated();
+    
 
     const inputChange = name => event => {
         // console.log(event.target.value)
@@ -23,6 +29,7 @@ const Signin = () => {
     const SignInSubmit = (e) => {
         newValues({...values, loading: true})
         e.preventDefault();
+        props.changeEmail(email);
         signInAPI({email, password})
         .then(response => {
             if(response.error){
@@ -73,7 +80,11 @@ const Signin = () => {
 
     const redirectUser = () => {
         if(redirectToReferrer){
-            return <Redirect to="/" />
+            if(user && user.role === 1){
+                return <Redirect to="/admin/dashboard" />
+            }else{
+                return <Redirect to="/user/dashboard" />
+            }
         }
     }
 
@@ -106,4 +117,19 @@ const Signin = () => {
     )
 }
 
-export default Signin;
+const mapStateProps = (state) => {
+    return {
+        name : state.name,
+        email: state.email
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeEmail:(email) => {
+            dispatch({type:'CHANGE_EMAIL', payload:email})
+        }
+    }
+}
+
+export default connect(mapStateProps, mapDispatchToProps)(Signin);
